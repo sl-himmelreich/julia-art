@@ -180,6 +180,11 @@ html, body {
   color: var(--ink-soft);
   padding: 4px 4px 14px;
 }
+.hint-mobile { display: none; }
+@media (max-width: 720px) {
+  .hint-desktop { display: none; }
+  .hint-mobile { display: inline; }
+}
 
 /* ===== PDF viewer ===== */
 .pdf-viewer {
@@ -188,6 +193,12 @@ html, body {
   gap: 18px;
   align-items: center;
   min-height: 400px;
+}
+
+.pdf-page-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .pdf-page {
@@ -359,10 +370,42 @@ html, body {
   .brand-sub { font-size: 12px; }
   .tabs { padding: 0 16px; }
   .tab { padding: 10px 12px; font-size: 14px; }
-  .container { padding: 16px 12px 40px; }
-  .toolbar { padding: 12px 14px; }
+  .container { padding: 16px 0 40px; }
+  .toolbar { padding: 12px 14px; margin: 0 12px 10px; }
   .toolbar-title { font-size: 16px; }
   .btn { padding: 8px 12px; font-size: 14px; }
+  .hint { padding: 4px 12px 14px; }
+
+  /* PDF viewer on mobile: each page is shown at a readable size
+     (even if wider than screen) and can be scrolled horizontally */
+  .pdf-viewer {
+    padding: 0;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .pdf-page-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 12px 4px;
+    justify-content: flex-start;
+    scroll-snap-type: x proximity;
+  }
+  .pdf-page {
+    flex: 0 0 auto;
+    max-width: none;
+    border-radius: 6px;
+    scroll-snap-align: center;
+  }
+  .pdf-page canvas {
+    max-width: none;
+    width: auto;
+    height: auto;
+    display: block;
+  }
+  .pdf-page-number { opacity: 1; }
+
   .lightbox-nav { width: 40px; height: 40px; font-size: 26px; }
   .lightbox-prev { left: 8px; }
   .lightbox-next { right: 8px; }

@@ -5,8 +5,13 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
 // Renders higher resolution for crisp display & zoom
-const RENDER_SCALE = 1.6;      // on-screen
+const DESKTOP_SCALE = 1.6;     // on-screen (desktop)
+const MOBILE_SCALE = 2.2;      // on-screen (mobile, horizontal scroll)
 const LIGHTBOX_SCALE = 3.0;    // zoomed-in high-res
+
+function isMobile() {
+  return window.matchMedia("(max-width: 720px)").matches;
+}
 
 const viewers = {
   reestr: { el: null, pdf: null, pages: [], rendered: false, path: "pdfs/reestr.pdf", title: "Реестр полный 08.04.2026" },
@@ -62,6 +67,8 @@ async function renderPdf(name) {
     v.pages = [];
 
     for (let i = 1; i <= pdf.numPages; i++) {
+      const wrap = document.createElement("div");
+      wrap.className = "pdf-page-wrap";
       const pageEl = document.createElement("div");
       pageEl.className = "pdf-page";
       pageEl.dataset.page = i;
@@ -71,15 +78,17 @@ async function renderPdf(name) {
       const canvas = document.createElement("canvas");
       pageEl.appendChild(canvas);
       pageEl.appendChild(num);
-      v.el.appendChild(pageEl);
+      wrap.appendChild(pageEl);
+      v.el.appendChild(wrap);
       v.pages.push({ pageEl, canvas, pageNum: i });
 
       pageEl.addEventListener("click", () => openLightbox(name, i - 1));
     }
 
     // render all pages sequentially (avoids huge memory spikes on big PDFs)
+    const scale = isMobile() ? MOBILE_SCALE : DESKTOP_SCALE;
     for (const p of v.pages) {
-      await renderPageOnCanvas(pdf, p.pageNum, p.canvas, RENDER_SCALE);
+      await renderPageOnCanvas(pdf, p.pageNum, p.canvas, scale);
     }
 
     v.rendered = true;
