@@ -178,6 +178,12 @@ async function renderLightboxPage() {
   const v = viewers[viewerName];
   const pageNum = pageIndex + 1;
 
+  // reset zoom state when changing page
+  const stage = document.getElementById("lightbox-stage");
+  stage.classList.remove("zoomed");
+  stage.scrollTop = 0;
+  stage.scrollLeft = 0;
+
   // loading state
   lightboxImg.removeAttribute("src");
   lightboxCaption.textContent = `Загружаем страницу ${pageNum} из ${v.pdf.numPages}…`;
@@ -200,8 +206,33 @@ function closeLightbox() {
 }
 
 lightboxClose.addEventListener("click", closeLightbox);
+// Click outside the image closes. Click on the image toggles zoom.
 lightbox.addEventListener("click", (e) => {
-  if (e.target === lightbox || e.target.id === "lightbox-stage") closeLightbox();
+  if (e.target === lightbox) closeLightbox();
+});
+const stageEl = document.getElementById("lightbox-stage");
+stageEl.addEventListener("click", (e) => {
+  if (e.target === lightboxImg) {
+    // toggle 2x zoom centered where tapped
+    const zoomed = stageEl.classList.toggle("zoomed");
+    if (zoomed) {
+      // wait a tick for layout, then scroll to tap point
+      requestAnimationFrame(() => {
+        const rect = lightboxImg.getBoundingClientRect();
+        const stageRect = stageEl.getBoundingClientRect();
+        const relX = (e.clientX - stageRect.left) / stageRect.width;
+        const relY = (e.clientY - stageRect.top) / stageRect.height;
+        stageEl.scrollLeft = rect.width * relX - stageRect.width / 2;
+        stageEl.scrollTop = rect.height * relY - stageRect.height / 2;
+      });
+    } else {
+      stageEl.scrollTop = 0;
+      stageEl.scrollLeft = 0;
+    }
+  } else {
+    // clicked empty area inside stage — close
+    closeLightbox();
+  }
 });
 lightboxPrev.addEventListener("click", () => {
   if (lightboxCtx.pageIndex > 0) {
@@ -223,6 +254,26 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "ArrowLeft") lightboxPrev.click();
   else if (e.key === "ArrowRight") lightboxNext.click();
 });
+
+// Swipe navigation on mobile (only when not zoomed)
+let touchStartX = null, touchStartY = null;
+stageEl.addEventListener("touchstart", (e) => {
+  if (stageEl.classList.contains("zoomed")) return;
+  if (e.touches.length !== 1) return;
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+stageEl.addEventListener("touchend", (e) => {
+  if (touchStartX === null) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touchStartX;
+  const dy = t.clientY - touchStartY;
+  touchStartX = touchStartY = null;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    if (dx < 0) lightboxNext.click();
+    else lightboxPrev.click();
+  }
+}, { passive: true });
 
 // ===== Init =====
 activateTab("reestr");
