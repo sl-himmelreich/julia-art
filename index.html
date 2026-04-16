@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Коллекция Б. Н. Кузнецова — Julia Art</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark">JA</div>
+      <div class="brand-text">
+        <div class="brand-title">Julia Art</div>
+        <div class="brand-sub">Коллекция произведений живописи</div>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="Разделы коллекции">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="panel-reestr" id="tab-reestr" data-tab="reestr">
+        <span class="tab-icon" aria-hidden="true">📑</span>
+        <span>Коллекция. Реестр</span>
+      </button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-kuznetsov" id="tab-kuznetsov" data-tab="kuznetsov" tabindex="-1">
+        <span class="tab-icon" aria-hidden="true">👤</span>
+        <span>Коллекционер</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel" id="panel-reestr" role="tabpanel" aria-labelledby="tab-reestr">
+      <div class="toolbar">
+        <div class="toolbar-title">Реестр полный — 08.04.2026</div>
+        <div class="toolbar-actions">
+          <button class="btn" data-action="save" data-target="reestr">
+            <span aria-hidden="true">⬇</span> Сохранить как PDF
+          </button>
+          <button class="btn" data-action="print" data-target="reestr">
+            <span aria-hidden="true">🖨</span> Распечатать на принтер
+          </button>
+        </div>
+      </div>
+      <div class="hint">Нажмите на любую страницу, чтобы открыть её в увеличенном виде. Закрытие — клавиша Esc или крестик в правом верхнем углу.</div>
+      <div class="pdf-viewer" id="viewer-reestr" data-pdf="pdfs/reestr.pdf" aria-label="Реестр коллекции"></div>
+    </section>
+
+    <section class="panel" id="panel-kuznetsov" role="tabpanel" aria-labelledby="tab-kuznetsov" hidden>
+      <div class="toolbar">
+        <div class="toolbar-title">Кузнецов Б. Н. — История создания коллекции</div>
+        <div class="toolbar-actions">
+          <button class="btn" data-action="save" data-target="kuznetsov">
+            <span aria-hidden="true">⬇</span> Сохранить как PDF
+          </button>
+          <button class="btn" data-action="print" data-target="kuznetsov">
+            <span aria-hidden="true">🖨</span> Распечатать на принтер
+          </button>
+        </div>
+      </div>
+      <div class="hint">Нажмите на любую страницу, чтобы открыть её в увеличенном виде. Закрытие — клавиша Esc или крестик в правом верхнем углу.</div>
+      <div class="pdf-viewer" id="viewer-kuznetsov" data-pdf="pdfs/kuznetsov.pdf" aria-label="История создания коллекции"></div>
+    </section>
+  </main>
+
+  <!-- Лайтбокс -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр изображения" hidden>
+    <button class="lightbox-close" id="lightbox-close" aria-label="Закрыть (Esc)">×</button>
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Предыдущая">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Следующая">›</button>
+    <div class="lightbox-stage" id="lightbox-stage">
+      <img id="lightbox-img" alt="" />
+    </div>
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+
+  <footer class="site-footer">
+    <div>© Julia Art — Коллекция Б. Н. Кузнецова</div>
+  </footer>
+
+  <!-- Скрытые iframe для печати/сохранения PDF -->
+  <iframe id="print-frame" style="display:none" aria-hidden="true" title="Печать"></iframe>
+
+  <!-- PDF.js (pdfjs-dist 4.x legacy build) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
